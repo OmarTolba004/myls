@@ -1,8 +1,29 @@
+/**********************************************************************************************************************
+ *  FILE DESCRIPTION
+ *  -------------------------------------------------------------------------------------------------------------------
+ *  File:  		  myls.c
+ *  Module:  	  myls
+ *
+ *  Description:  source file for my ls
+ *
+ *  -------------------------------------------------------------------------------------------------------------------
+ *	Author: 	  Omar Tolba
+ *	Date:		  27/8/2023
+ *********************************************************************************************************************/
+
+/**********************************************************************************************************************
+ *  INCLUDES
+ *********************************************************************************************************************/
 #include <sys/types.h>
 #include <dirent.h>
 #include <stdio.h>
 #include <string.h>
+#include "func.h"
+#include <stdlib.h>
 
+/**********************************************************************************************************************
+ *  MAIN FUNCTION
+ *********************************************************************************************************************/
 int main(int argc, char *argv[])
 {
     char curr_dir[] = ".";
@@ -13,20 +34,24 @@ int main(int argc, char *argv[])
     else
         path = argv[1];
 
+    /* Open the directory */
     DIR *dirptr = opendir(path);
 
     /* Files counter*/
     int filesCount = 0;
     /* dirctory entry variable*/
-    struct dirent* directoryEntry;
+    struct dirent *directoryEntry;
     /* Looping over dirptr*/
+
+    char *filePath;
     while ((directoryEntry = readdir(dirptr)) != NULL)
     {
-        if(strcmp(directoryEntry->d_name,".") == 0 || strcmp(directoryEntry->d_name,"..")==0) continue;
+
+        filePath = concatenatePathAndFile(path, directoryEntry->d_name);
+        printlsFromStat(filePath,directoryEntry->d_name);
+        
         filesCount++;
+        free(filePath);
     }
-
-    printf("filesCount is %d \n", filesCount);
-
     return 0;
 }
